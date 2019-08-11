@@ -15,14 +15,15 @@ function loadArticle(){
     xhtp.onreadystatechange = function(){
         if (this.readyState == 4 && this.status == 200){
             var o = JSON.parse(this.response);
-           appendToTable(o.DATA)
+           appendToTable(o.DATA, o.MESSAGE)
+           
         }
     }
     xhtp.open("GET", "http://api-ams.me/v1/api/articles?page=1&limit=15", true);
     xhtp.send()
 }
-// loadArticle()
-function appendToTable(article){
+loadArticle()
+function appendToTable(article, msg){
     var content = "";
     for (a of article){
         content +=`
@@ -30,11 +31,14 @@ function appendToTable(article){
             <td>${a.ID}</td>
             <td>${a.TITLE}</td>
             <td>${a.DESCRIPTION}</td>
+            <td><img src=${a.IMAGE} /></td>
             <td><button class="btn btn-outline-primary waves-effect">DELETE</button></td>
         </tr>
     `
     }
     $('tbody').html(content)
+    toastr.success(`${msg}`)
+  
 }
 function loadPhotos(){
     var xhtp = new XMLHttpRequest()
@@ -61,4 +65,4 @@ function appendTable(data){
     }
     $('tbody').html(content)
 }
-loadPhotos()
+// loadPhotos()
