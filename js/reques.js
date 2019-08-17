@@ -38,7 +38,6 @@ function appendToTable(article, msg){
     }
     $('tbody').html(content)
     toastr.success(`${msg}`)
-  
 }
 function loadPhotos(){
     var xhtp = new XMLHttpRequest()
