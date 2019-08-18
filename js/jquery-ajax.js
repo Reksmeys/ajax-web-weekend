@@ -2,6 +2,8 @@
 $(function(){
     //jQuery Ajax
     fetchArticle()
+    
+
 })
 
 function fetchArticle(){
@@ -11,8 +13,8 @@ function fetchArticle(){
         success: function(article){
             // console.log(response)
             /*-------------display data to table and show message------*/
-            // appendToTable(article.DATA, article.MESSAGE)
-            loadCard(article.DATA, article.MESSAGE)
+            appendToTable(article.DATA, article.MESSAGE)
+            // loadCard(article.DATA, article.MESSAGE)
         },
         error: function(er){
             console.log(er)

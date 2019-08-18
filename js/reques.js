@@ -1,3 +1,8 @@
+var id = window.location.href.split('?')
+
+var ids = id[1].substr(3, id[1].length-2)
+console.log(ids)
+
 //load data from article.json
 function loadLocalJSON(){
     var xhtp = new XMLHttpRequest()
