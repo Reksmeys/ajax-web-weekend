@@ -1,7 +1,16 @@
-var id = window.location.href.split('?')
-
-var ids = id[1].substr(3, id[1].length-2)
-console.log(ids)
+$(function(){
+    $('#showModal').click(function(){
+        $('#modalArticle').modal('show')
+    })
+    $('#save').click(function(){
+       let article = {
+           TITLE: $('#title').val(),
+           DESCRIPTION: $('#desc').val()
+       }
+       console.log(article)
+        insertArticle(article)
+    })
+})
 
 //load data from article.json
 function loadLocalJSON(){
@@ -70,3 +79,22 @@ function appendTable(data){
     $('tbody').html(content)
 }
 // loadPhotos()
+
+//insert article
+function insertArticle(article){
+    $.ajax({
+        url: "http://api-ams.me/v1/api/articles",
+        method: "POST",
+        headers: {
+            "content-type":"application/json"
+        },
+        data: JSON.stringify(article),
+        success: function(res){
+            loadArticle()
+            $('#modalArticle').modal('hide')
+        },
+        error: function(er){
+            console.log(er)
+        }
+    })
+}
