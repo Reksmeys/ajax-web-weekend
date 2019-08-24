@@ -7,8 +7,10 @@ $(function(){
            TITLE: $('#title').val(),
            DESCRIPTION: $('#desc').val()
        }
-       console.log(article)
         insertArticle(article)
+    })
+    $('#search').keyup(function(){
+        searchArticle($(this).val())
     })
 })
 
@@ -25,16 +27,28 @@ function loadLocalJSON(){
     xhtp.send()
 }
 function loadArticle(){
-    var xhtp = new XMLHttpRequest()
-    xhtp.onreadystatechange = function(){
-        if (this.readyState == 4 && this.status == 200){
-            var o = JSON.parse(this.response);
-           appendToTable(o.DATA, o.MESSAGE)
+    // var xhtp = new XMLHttpRequest()
+    // xhtp.onreadystatechange = function(){
+    //     if (this.readyState == 4 && this.status == 200){
+    //         var o = JSON.parse(this.response);
+    //        appendToTable(o.DATA, o.MESSAGE)
            
+    //     }
+    // }
+    // xhtp.open("GET", "http://api-ams.me/v1/api/articles?page=1&limit=15", true);
+    // xhtp.send()
+    //-------------other way with jquery-------------
+
+    $.ajax({
+        url: "http://api-ams.me/v1/api/articles?page=1&limit=15",
+        method: "GET",
+        success: function(res){
+            appendToTable(res.DATA, res.MESSAGE)
+        }, 
+        error: function(er){
+            console.log(er)
         }
-    }
-    xhtp.open("GET", "http://api-ams.me/v1/api/articles?page=1&limit=15", true);
-    xhtp.send()
+    })
 }
 loadArticle()
 function appendToTable(article, msg){
@@ -92,6 +106,18 @@ function insertArticle(article){
         success: function(res){
             loadArticle()
             $('#modalArticle').modal('hide')
+        },
+        error: function(er){
+            console.log(er)
+        }
+    })
+}
+function searchArticle(title){
+    $.ajax({
+        url: `http://api-ams.me/v1/api/articles?title=${title}&page=1&limit=15`,
+        method: "GET",
+        success: function(res){
+            appendToTable(res.DATA, res.MESSAGE)
         },
         error: function(er){
             console.log(er)
