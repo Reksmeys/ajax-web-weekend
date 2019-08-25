@@ -1,17 +1,45 @@
 $(function(){
     $('#showModal').click(function(){
         $('#modalArticle').modal('show')
+        $('#modalTitle').text('Add')
     })
     $('#save').click(function(){
        let article = {
+           ID: $('#idArticle').val(),
            TITLE: $('#title').val(),
            DESCRIPTION: $('#desc').val()
        }
+       console.log(article)
+       if ($('#modalTitle').text() == "Add"){
         insertArticle(article)
+       }else{
+           updateArticle(article)
+       }
+        
     })
+
     $('#search').keyup(function(){
         searchArticle($(this).val())
     })
+    //
+    $(document).on('click', '.delete', function(e){
+        console.log($(e.currentTarget).attr('data-id'))
+        // let id = $(this).parents('tr').children().eq(0).text()
+        deleteArticle($(e.currentTarget).attr('data-id'))
+    })
+    $(document).on('click', '.edit', function(e){
+        let title = $(this).parents('tr').children().eq(0).text()
+        let desc = $(this).parents('tr').children().eq(1).text()
+
+        $('#title').val(title)
+        $('#desc').val(desc)
+        $('#idArticle').val($(e.currentTarget).attr('data-id'))
+        $('#modalArticle').modal('show')
+        $('#modalTitle').text('Update')
+    })
+
+   
+
 })
 
 //load data from article.json
@@ -56,11 +84,13 @@ function appendToTable(article, msg){
     for (a of article){
         content +=`
         <tr>
-            <td>${a.ID}</td>
             <td>${a.TITLE}</td>
             <td>${a.DESCRIPTION}</td>
-            <td><img src=${a.IMAGE} /></td>
-            <td><button class="btn btn-outline-primary waves-effect">DELETE</button></td>
+            <td><img class="img-responsive w-25" src=${a.IMAGE} /></td>
+            <td>
+                <button class="btn btn-outline-danger waves-effect delete" data-id="${a.ID}"><i class="fas fa-trash"></i></button>
+                <button class="btn btn-outline-primary waves-effect edit" data-id="${a.ID}">edit</button>
+            </td>
         </tr>
     `
     }
@@ -118,6 +148,38 @@ function searchArticle(title){
         method: "GET",
         success: function(res){
             appendToTable(res.DATA, res.MESSAGE)
+        },
+        error: function(er){
+            console.log(er)
+        }
+    })
+}
+function deleteArticle(id){
+    $.ajax({
+        url: `http://api-ams.me/v1/api/articles/${id}`,
+        method: "DELETE",
+        success: function(res){
+            toastr.info(`${res.MESSAGE}`)
+            loadArticle()
+            console.log("success delete")
+        }, 
+        error: function(er){
+            console.log(er)
+        }
+    })
+}
+function updateArticle(article){
+    $.ajax({
+        url: `http://api-ams.me/v1/api/articles/${article.ID}`,
+        method: "PUT",
+        headers: {
+            "content-type": "application/json"
+        },
+        data: JSON.stringify(article),
+        success: function(res){
+            loadArticle()
+            toastr.info(`${res.MESSAGE}`)
+            $('#modalArticle').modal('hide')
         },
         error: function(er){
             console.log(er)
